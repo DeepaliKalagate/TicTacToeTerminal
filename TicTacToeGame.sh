@@ -3,6 +3,7 @@ echo "Welcome to Tic Tac Toe Game"
 
 #Constant Variable
 MAX_POSITION=9
+PLAYER=1
 
 #variables
 playerSymbol=''
@@ -21,17 +22,19 @@ function freshBoard()
 
 function symbolAssignment()
 {
-	firstPlay=$((RANDOM%2))
+	randomTurn=$((RANDOM%2))
 
-	if [ $firstPlay -eq 1 ]
+	if [ $randomTurn -eq $PLAYER ]
 	then
 		playerSymbol='X'
 		computerSymbol='O'
 		echo "Player symobol : X | Computer symbol : O"
+		echo "Player Plays First"
 	else
 		 playerSymbol='O'
 		 computerSymbol='X'
 		echo "Player symobol : O | Computer symbol : X"
+		echo "Computer Plays First"
 	fi
 }
 
