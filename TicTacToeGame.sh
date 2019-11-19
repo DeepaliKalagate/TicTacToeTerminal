@@ -72,6 +72,8 @@ function checkHorizontalToWin()
 				echo "Player Won"
 				oneWon=true
 				break
+			else
+				checkHorizontalMove
 			fi
 			i=$(($i+2))
 			counter=$(($counter+1))
@@ -100,6 +102,8 @@ function checkVerticalToWin()
 				echo " Player Won "
 				oneWon=true
 				break
+			else
+				checkVerticalMove
 			fi
 			i=$(($i+2))
 			counter=$(($counter+1))
@@ -133,6 +137,9 @@ function checkDiagonalToWin()
 				echo "Player Won"
                                 oneWon=true
                                 break
+			else
+				checkDiagonalMove
+				checkDiagonalTurnMove
 			fi
 			i=$(($i+2))
                 	counter=$(($counter+1))
@@ -144,6 +151,63 @@ function checkDiagonalToWin()
 		break
         done
 }
+
+function checkHorizontalMove()
+{
+        if [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+1]} ]]
+        then
+                echo "Position 3 is Blank"
+        elif [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+2]} ]]
+        then
+                echo "Position 2 is Blank"
+        elif [[  ${boardPosition[$i+1]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+1]} == ${boardPosition[$i+2]} ]]
+        then
+                echo "Position 1 is Blank" 
+        fi
+}
+
+function checkVerticalMove()
+{
+        if [[ ${boardPosition[$i]} == $playerSymbol ]] && [[  ${boardPosition[$i]}  ==  ${boardPosition[$i+3]} ]]
+        then
+                echo "Position 7 is Blank"
+	elif [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+6]} ]]
+        then
+                echo "Position 4 is Blank"
+        elif [[  ${boardPosition[$i+3]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+3]} == ${boardPosition[$i+6]} ]]
+        then
+                echo "Position 1 is Blank" 
+        fi
+}
+
+function checkDiagonalMove()
+{
+	if [[ ${boardPosition[$i]} == $playerSymbol ]] && [[  ${boardPosition[$i]}  ==  ${boardPosition[$i+4]} ]]
+        then
+                echo "Position 9 is Blank"
+        elif [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+8]} ]]
+        then
+                echo "Position 5 is Blank"
+        elif [[  ${boardPosition[$i+4]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+4]} == ${boardPosition[$i+8]} ]]
+        then
+                echo "Position 1 is Blank" 
+        fi
+}
+
+function checkDiagonalTurnMove()
+{
+	if [[ ${boardPosition[$i+2]} == $playerSymbol ]] && [[  ${boardPosition[$i+2]}  ==  ${boardPosition[$i+4]} ]]
+        then
+                echo "Position 7 is Blank"
+        elif [[  ${boardPosition[$i+2]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i+2]} == ${boardPosition[$i+6]} ]]
+        then
+                echo "Position 5 is Blank"
+        elif [[  ${boardPosition[$i+4]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+4]} == ${boardPosition[$i+6]} ]]
+        then
+                echo "Position 3 is Blank"
+        fi
+}
+
 
 function displayBoard()
 {
