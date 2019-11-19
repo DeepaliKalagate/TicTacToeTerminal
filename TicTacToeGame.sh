@@ -13,6 +13,7 @@ playerPosition=0
 
 #boolean Flags
 oneWon=false
+play=false
 
 #Array
 declare -a boardPosition
@@ -31,6 +32,7 @@ function symbolAssignment()
 
 	if [ $randomTurn -eq $PLAYER ]
 	then
+		play=true
 		playerSymbol='X'
 		computerSymbol='O'
 		echo "Player symobol : X | Computer symbol : O"
@@ -41,8 +43,6 @@ function symbolAssignment()
 		echo "Player symobol : O | Computer symbol : X"
 		echo "Computer Plays First"
 	fi
-	displayBoard
-	playerInput
 }
 
 function playerInput()
@@ -55,18 +55,37 @@ function playerInput()
 		echo "Oh ho! Position Occupied! Please Enter New Position"
 		playerInput
 	fi
+	play=false
 }
+
+function computerInput()
+{
+	computerPosition=$((RANDOM%9+1))
+	if [ ${boardPosition[$computerPosition]} == 0 ]
+	then
+		boardPosition[$computerPosition]=$computerSymbol
+	else
+		computerInput
+		computerTurn 
+	fi
+	play=true
+}
+
+function computerTurn()
+{
+	boardPosition[$value]=$computerSymbol
+}
+
 
 #Checking Horizontal[Row] To Win Game
 function checkHorizontalToWin()
 {
-
 	i=1
 	for (( j=1; j<=$SIZE; j++ ))
 	do
 		if [[ ${boardPosition[$i]} == ${boardPosition[$i+1]} ]] && [[  ${boardPosition[$i+1]}  ==  ${boardPosition[$i+2]} ]] && [[ ${boardPosition[$i+2]} == $playerSymbol ]]
 		then
-			echo "Player Won"
+			echo "$1 Won"
 			oneWon=true
 			break
 		else
@@ -85,7 +104,7 @@ function checkVerticalToWin()
 		if [[ ${boardPosition[$i]} == ${boardPosition[$i+3]} ]] && [[  ${boardPosition[$i+3]}  ==  ${boardPosition[$i+6]} ]] && [[ ${boardPosition[$i+6]} == $1 ]]
 		then
 			displayBoard
-			echo " Player Won "
+			echo " $1 Won "
 			oneWon=true
 			break
 		else
@@ -99,50 +118,52 @@ function checkVerticalToWin()
 function checkDiagonalToWin()
 {
 	i=1
-        for (( j=1; j<2; j++ ))
-        do
-              	if [[ ${boardPosition[$i]} == ${boardPosition[$i+4]} ]] && [[  ${boardPosition[$i+4]}  ==  ${boardPosition[$i+8]} ]] && [[ ${boardPosition[$i+8]} == $1 ]]
-               	then
-                       	echo "Player Won"
-                       	oneWon=true
-                       	break
-		elif [[ ${boardPosition[$i+2]} == ${boardPosition[$i+4]} ]] && [[  ${boardPosition[$i+4]}  ==  ${boardPosition[$i+6]} ]] && [[ ${boardPosition[$i+6]} == $1 ]]
-               	then 
-			echo "Player Won"
-                        oneWon=true
-                        break
-		else
-			checkDiagonalMove
-			checkDiagonalTurnMove
-		fi
-       	done
+       	if [[ ${boardPosition[$i]} == ${boardPosition[$i+4]} ]] && [[  ${boardPosition[$i+4]}  ==  ${boardPosition[$i+8]} ]] && [[ ${boardPosition[$i+8]} == $1 ]]
+        then
+		echo "$1 Won"
+                oneWon=true
+	elif [[ ${boardPosition[$i+2]} == ${boardPosition[$i+4]} ]] && [[  ${boardPosition[$i+4]}  ==  ${boardPosition[$i+6]} ]] && [[ ${boardPosition[$i+6]} == $1 ]]
+        then 
+		echo "Player Won"
+                oneWon=true
+	else
+		checkDiagonalMove
+		checkDiagonalTurnMove
+	fi
 }
 
 function checkHorizontalMove()
 {
         if [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+1]} ]]
         then
-                echo "Position $(($i+2)) is Blank"
+                value=$(($i+2))
+		echo "Position $value is blank"
         elif [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+2]} ]]
         then
-                echo "Position $(($i+1)) is Blank"
+		value=$(($i+1))
+                echo "Position $(($value)) is Blank"
         elif [[  ${boardPosition[$i+1]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+1]} == ${boardPosition[$i+2]} ]]
         then
-                echo "Position $i is Blank" 
-        fi
+		value=$(($i))
+                echo "Position $value is Blank" 
+        	computerInput
+	fi
 }
 
 function checkVerticalMove()
 {
         if [[ ${boardPosition[$i]} == $playerSymbol ]] && [[  ${boardPosition[$i]}  ==  ${boardPosition[$i+3]} ]]
         then
-                echo "Position $(($i+6)) is Blank"
+		value=$(($i+6))
+                echo "Position $value is Blank"
 	elif [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+6]} ]]
         then
-                echo "Position $(($i+3)) is Blank"
+		value=$(($i+3))
+                echo "Position $value is Blank"
         elif [[  ${boardPosition[$i+3]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+3]} == ${boardPosition[$i+6]} ]]
         then
-                echo "Position $i is Blank" 
+		value=$(($i))
+                echo "Position $value is Blank" 
         fi
 }
 
@@ -150,13 +171,16 @@ function checkDiagonalMove()
 {
 	if [[ ${boardPosition[$i]} == $playerSymbol ]] && [[  ${boardPosition[$i]}  ==  ${boardPosition[$i+4]} ]]
         then
-                echo "Position $(($i+8)) is Blank"
+		value=$(($i+8))
+                echo "Position $value is Blank"
         elif [[  ${boardPosition[$i]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i]} == ${boardPosition[$i+8]} ]]
         then
-                echo "Position $(($i+4)) is Blank"
+		value=$(($i+4))
+                echo "Position $value is Blank"
         elif [[  ${boardPosition[$i+4]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+4]} == ${boardPosition[$i+8]} ]]
         then
-                echo "Position $i is Blank" 
+		value=$(($i))
+                echo "Position $value is Blank" 
         fi
 }
 
@@ -164,13 +188,16 @@ function checkDiagonalTurnMove()
 {
 	if [[ ${boardPosition[$i+2]} == $playerSymbol ]] && [[  ${boardPosition[$i+2]}  ==  ${boardPosition[$i+4]} ]]
         then
-                echo "Position $(($i+6)) is Blank"
+		value=$(($i+6))
+                echo "Position $value is Blank"
         elif [[  ${boardPosition[$i+2]}  ==  $playerSymbol ]] && [[ ${boardPosition[$i+2]} == ${boardPosition[$i+6]} ]]
         then
-                echo "Position $(($i+4)) is Blank"
+		value=$(($i+4))
+                echo "Position $value is Blank"
         elif [[  ${boardPosition[$i+4]}  ==  $playerSymbol ]] &&  [[ ${boardPosition[$i+4]} == ${boardPosition[$i+6]} ]]
         then
-                echo "Position $(($i+2)) is Blank"
+		value=$(($i+2))
+                echo "Position $value is Blank"
         fi
 }
 
@@ -192,8 +219,6 @@ function displayBoard()
         printf '      /-------|-------|-----\\ \n'
 }
 
-
-
 function checkGameTie()
 {
 	count=1
@@ -211,20 +236,31 @@ function checkGameTie()
 	done
 }
 
+function checkWin()
+{
+	symbol=$1
+	checkHorizontalToWin $playerSymbol
+        checkVerticalToWin $playerSymbol 
+        checkDiagonalToWin $playerSymbol
+	checkGameTie
+
+}
 #-------------------------MAIN-----------------
 
 
 freshBoard
 symbolAssignment
 
-while [[ $oneWon == false ]]
+while [ $oneWon == false ]
 do
 	displayBoard
-	playerInput
-	checkHorizontalToWin $playerSymbol
-	checkVerticalToWin $playerSymbol
-	checkDiagonalToWin $playerSymbol
-	checkGameTie
-done
-displayBoard
+	if [ $play == true ]
+	then
+		playerInput
+		checkWin $playerSymbol
+	else
+		computerInput
+		checkWin $computerSymbol
+	fi
 
+done
