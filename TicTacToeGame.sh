@@ -60,13 +60,14 @@ function playerInput()
 
 function computerInput()
 {
+	checkCorner
 	computerPosition=$((RANDOM%9+1))
 	if [ ${boardPosition[$computerPosition]} == 0 ]
 	then
 		boardPosition[$computerPosition]=$computerSymbol
 	else
 		computerInput
-		computerTurn 
+		computerTurn
 	fi
 	play=true
 }
@@ -74,6 +75,23 @@ function computerInput()
 function computerTurn()
 {
 	boardPosition[$value]=$computerSymbol
+}
+
+function checkCorner()
+{
+	for((i=1; i<=MAX_POSITION; i=$(($i+2)) ))
+	do
+		if [ ${boardPosition[$i]} == 0 ]
+		then
+			computerPosition=$i
+            		boardPosition[$computerPosition]=$computerSymbol
+            	break
+		fi
+		if [ $i -eq 3 ]
+		then
+			i=$(($i+2))
+		fi
+	done
 }
 
 
