@@ -20,6 +20,7 @@ computerMove=false
 #Array
 declare -a boardPosition
 
+#function for Initialize Empty Board
 function freshBoard()
 {
 	for (( i=1; i<=$MAX_POSITION; i++ ))
@@ -28,6 +29,7 @@ function freshBoard()
 	done
 }
 
+#function for Assigning Symbols to Player and Computer also checking who Play First
 function symbolAssignment()
 {
 	randomTurn=$((RANDOM%2))
@@ -47,6 +49,7 @@ function symbolAssignment()
 	fi
 }
 
+#function for take input form Player
 function playerInput()
 {
 	read -p "Enter Position Number to put $playerSymbol at Empty Position :" playerPosition
@@ -60,6 +63,7 @@ function playerInput()
 	play=false
 }
 
+#function for displaying board for playing Game
 function displayBoard()
 {
         n=1
@@ -77,7 +81,7 @@ function displayBoard()
         printf '      /-------|-------|-----\\ \n'
 }
 
-
+#function for input from Computer
 function computerInput()
 {
 	computerMove=false
@@ -85,6 +89,7 @@ function computerInput()
 	winOrBlockPosition $computerSymbol
 	winOrBlockPosition $playerSymbol
 	checkCorner
+	checkCenter
 	if [ $computerMove == false ]
 	then
 		computerPosition=$((RANDOM%9+1))
@@ -93,7 +98,19 @@ function computerInput()
 	displayBoard
 }
 
+#function for Checking the Center for put value
+function checkCenter()
+{
+	center=5
+	if [[ $computerMove == false ]] && [[ ${boardPosition[$center]} == 0 ]]
+	then
+		computerPosition=$center
+               	boardPosition[$computerPosition]=$computerSymbol
+               	computerMove=true
+   	fi
+}
 
+#function for win or block position in Game
 function winOrBlockPosition()
 {
         rowValue=1
@@ -108,6 +125,7 @@ function winOrBlockPosition()
 
 }
 
+#function for checking the winning position 
 function checkTheWinPosition()
 {
 	counterValue=1
@@ -140,6 +158,7 @@ function checkTheWinPosition()
 	fi
 }
 
+#function for checking the corners to win game
 function checkCorner()
 {
 	if [ $computerMove = false ]
@@ -150,6 +169,7 @@ function checkCorner()
 			then
 				computerPosition=$i
             			boardPosition[$computerPosition]=$computerSymbol
+				computerMove=true
             		break
 			fi
 			if [ $i -eq 3 ]
@@ -161,7 +181,7 @@ function checkCorner()
 }
 
 
-#Checking Horizontal[Row] To Win Game
+#Checking Horizontal[Row] on Board To Win Game
 function checkHorizontalToWin()
 {
 	i=1
@@ -172,15 +192,13 @@ function checkHorizontalToWin()
 			echo "$1 Won"
 			oneWon=true
 			break
-#		else
-#			checkHorizontalMove
 		fi
 			i=$(($i+3))
 	done
 	computerMove=true
 }
 
-#checking Vertical[Column] win Game
+#checking Vertical[Column] on Board To Win Game
 function checkVerticalToWin()
 {
 	i=1
@@ -198,7 +216,7 @@ function checkVerticalToWin()
 	computerMove=true
 }
 
-#Checking Horizontal[Row] To Win Game
+#Checking Diagonal on Board To Win Game
 function checkDiagonalToWin()
 {
 	i=1
@@ -213,6 +231,7 @@ function checkDiagonalToWin()
 	fi
 }
 
+#function for checking Game Tie 
 function checkGameTie()
 {
 	count=1
@@ -231,6 +250,7 @@ function checkGameTie()
 	done
 }
 
+#function for checking how can win game with calling functions  
 function checkWin()
 {
         symbol=$1
@@ -242,8 +262,7 @@ function checkWin()
         checkDiagonalToWin $symbol
 }
 
-#-------------------------MAIN-----------------
-
+#***********************Main Program Starts*********************
 
 freshBoard
 symbolAssignment
