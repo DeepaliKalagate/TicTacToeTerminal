@@ -10,12 +10,13 @@ SIZE=3
 playerSymbol=''
 computerSymbol=''
 playerPosition=0
-computerPostion=0
+computerPosition=0
 
 #boolean Flags
 oneWon=false
 play=false
 computerMove=false
+
 
 #Array
 declare -a boardPosition
@@ -37,12 +38,12 @@ function symbolAssignment()
 		play=true
 		playerSymbol='X'
 		computerSymbol='O'
-		echo "Player symobol is : X and Computer symbol is : O"
+		echo "Player symobol : X | Computer symbol : O"
 		echo "Player Plays First"
 	else
 		 playerSymbol='O'
 		 computerSymbol='X'
-		echo "Player symobol is : O and Computer symbol is : X"
+		echo "Player symobol : O | Computer symbol : X"
 		echo "Computer Plays First"
 	fi
 }
@@ -77,7 +78,6 @@ function displayBoard()
         printf '      /-------|-------|-----\\ \n'
 }
 
-
 function computerInput()
 {
 	computerMove=false
@@ -96,15 +96,15 @@ function computerInput()
 
 function winOrBlockPosition()
 {
-        rowValue=1
-        columnValue=3
-        leftDiagonalValue=4
-        rightDiagonalValue=2
+	rowValue=1
+	columnValue=3
+	leftDiagonalValue=4
+	rightDiagonalValue=2
 
-        checkTheWinPosition $rowValue $1 $columnValue
-        checkTheWinPosition $columnValue $1 $rowValue
-        checkTheWinPosition $leftDiagonalValue $1 0
-        checkTheWinPosition $rightDiagonalValue $1 0
+	checkTheWinPosition $rowValue $1 $columnValue
+	checkTheWinPosition $columnValue $1 $rowValue
+	checkTheWinPosition $leftDiagonalValue $1 0
+	checkTheWinPosition $rightDiagonalValue $1 0
 
 }
 
@@ -172,8 +172,6 @@ function checkHorizontalToWin()
 			echo "$1 Won"
 			oneWon=true
 			break
-#		else
-#			checkHorizontalMove
 		fi
 			i=$(($i+3))
 	done
@@ -208,39 +206,41 @@ function checkDiagonalToWin()
                 oneWon=true
 	elif [[ ${boardPosition[$i+2]} == ${boardPosition[$i+4]} ]] && [[  ${boardPosition[$i+4]}  ==  ${boardPosition[$i+6]} ]] && [[ ${boardPosition[$i+6]} == $1 ]]
         then 
-		echo "Player Won"
+		echo "$1 Won"
                 oneWon=true
 	fi
 }
 
 function checkGameTie()
 {
-	count=1
-	while [[ ${boardPosition[$count]} != 0 ]]
-	do
-		if [ $count -eq $MAX_POSITION ]
-		then
-			displayBoard
-			echo "Game Is tie"
-			oneWon=true
-			computerMove=true
-			break
-		else
-			count=$(($count+1))
-		fi
-	done
+        count=1
+        while [[ ${boardPosition[$count]} != 0 ]]
+        do
+                if [ $count -eq $MAX_POSITION ]
+                then
+                        displayBoard
+                        echo "Ohho! Game Is Tie"
+                        oneWon=true
+                        computerMove=true
+                        break
+                else
+                        count=$(($count+1))
+                fi
+        done
 }
 
 function checkWin()
 {
-        symbol=$1
-        rowValue=1
-        columnValue=3
+	symbol=$1
+	rowValue=1
+	columnValue=3
 
-        checkHorizontalToWin $symbol $columnValue  $rowValue
-        checkVerticalToWin $symbol $rowValue $columnValue
-        checkDiagonalToWin $symbol
+	checkHorizontalToWin $symbol $columnValue  $rowValue
+ 	checkVerticalToWin $symbol $rowValue $columnValue
+	checkDiagonalToWin $symbol
 }
+
+
 
 #-------------------------MAIN-----------------
 
