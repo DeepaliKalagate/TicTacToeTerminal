@@ -73,7 +73,7 @@ function displayBoard()
                 for (( j=1; j<=$SIZE; j++ ))
                 do
                         printf '\t'
-                        printf '%s' "${boardPosition[$n]}"
+                        printf '%s' " ${boardPosition[$n]} "
                         n=$(( $n + 1 ))
                 done
                 printf '\n'
@@ -90,12 +90,8 @@ function computerInput()
 	winOrBlockPosition $playerSymbol
 	checkCorner
 	checkCenter
-	if [ $computerMove == false ]
-	then
-		computerPosition=$((RANDOM%9+1))
-	fi
+	checkEmptyPositions
 	play=true
-	displayBoard
 }
 
 #function for Checking the Center for put value
@@ -108,6 +104,25 @@ function checkCenter()
                	boardPosition[$computerPosition]=$computerSymbol
                	computerMove=true
    	fi
+}
+
+#function for checking remaining Positions on Board
+function checkEmptyPositions()
+{
+	if [ $computerMove = false ]
+	then
+		for((i=2; i< $MAXPOSITION; i=$(($i+2)) ))
+		do
+            	if [ ${boardPosition[$i]} == 0 ]
+            	then
+              		computerPosition=$i
+               		boardPosition[$computerPosition]=$computerSymbol
+               		computerMove=true
+           		break
+            	fi
+		done
+	fi
+
 }
 
 #function for win or block position in Game
